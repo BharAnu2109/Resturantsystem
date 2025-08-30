@@ -1,1 +1,95 @@
-<p>dashboard works!</p>
+<div class="dashboard-container">
+  <h1>Restaurant Dashboard</h1>
+  
+  <div *ngIf="loading" class="loading">Loading dashboard data...</div>
+  
+  <div *ngIf="!loading">
+    <!-- Key Metrics -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <h3>Total Revenue</h3>
+        <div class="metric-value">${{getTotalRevenue() | number:'1.2-2'}}</div>
+        <div class="metric-label">From delivered orders</div>
+      </div>
+      
+      <div class="metric-card">
+        <h3>Pending Orders</h3>
+        <div class="metric-value">{{getPendingOrdersCount()}}</div>
+        <div class="metric-label">Requires attention</div>
+      </div>
+      
+      <div class="metric-card">
+        <h3>Available Items</h3>
+        <div class="metric-value">{{getAvailableMenuItemsCount()}}</div>
+        <div class="metric-label">Menu items ready</div>
+      </div>
+      
+      <div class="metric-card">
+        <h3>Total Customers</h3>
+        <div class="metric-value">{{customers.length}}</div>
+        <div class="metric-label">Registered customers</div>
+      </div>
+    </div>
+
+    <!-- Recent Orders -->
+    <div class="orders-section">
+      <h2>Recent Orders</h2>
+      
+      <div *ngIf="orders.length === 0" class="no-orders">
+        No orders found. Start taking orders to see them here!
+      </div>
+      
+      <div *ngIf="orders.length > 0" class="orders-table">
+        <div class="table-header">
+          <div>Order ID</div>
+          <div>Customer</div>
+          <div>Items</div>
+          <div>Total</div>
+          <div>Status</div>
+          <div>Actions</div>
+        </div>
+        
+        <div *ngFor="let order of orders" class="table-row">
+          <div class="order-id">#{{order.id}}</div>
+          <div class="customer-name">{{getCustomerName(order.customer?.id || 0)}}</div>
+          <div class="items-count">{{order.orderItems?.length || 0}} items</div>
+          <div class="order-total">${{order.totalAmount | number:'1.2-2'}}</div>
+          <div class="order-status">
+            <span [class]="getOrderStatusClass(order.status)">{{order.status}}</span>
+          </div>
+          <div class="order-actions">
+            <select 
+              [value]="order.status" 
+              (change)="updateOrderStatus(order.id!, $any($event.target).value)"
+              class="status-select">
+              <option value="PENDING">Pending</option>
+              <option value="CONFIRMED">Confirmed</option>
+              <option value="PREPARING">Preparing</option>
+              <option value="READY">Ready</option>
+              <option value="DELIVERED">Delivered</option>
+              <option value="CANCELLED">Cancelled</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Customers Section -->
+    <div class="customers-section">
+      <h2>Customer List</h2>
+      
+      <div *ngIf="customers.length === 0" class="no-customers">
+        No customers found.
+      </div>
+      
+      <div *ngIf="customers.length > 0" class="customers-grid">
+        <div *ngFor="let customer of customers" class="customer-card">
+          <h4>{{customer.name}}</h4>
+          <p class="customer-email">{{customer.email}}</p>
+          <p class="customer-phone">{{customer.phone}}</p>
+          <div *ngIf="customer.address" class="customer-address">{{customer.address}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

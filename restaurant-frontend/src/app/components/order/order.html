@@ -1,1 +1,84 @@
-<p>order works!</p>
+<div class="order-container">
+  <h1>Place Order</h1>
+  
+  <div class="order-layout">
+    <div class="menu-section">
+      <h2>Menu Items</h2>
+      <div class="menu-grid">
+        <div *ngFor="let item of menuItems" class="menu-item" [class.unavailable]="!item.available">
+          <div class="menu-item-header">
+            <h3>{{item.name}}</h3>
+            <span class="price">${{item.price}}</span>
+          </div>
+          <p class="description">{{item.description}}</p>
+          <div class="item-footer">
+            <span class="category-tag">{{item.category}}</span>
+            <button 
+              class="add-btn" 
+              [disabled]="!item.available"
+              (click)="addToCart(item)">
+              Add to Cart
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cart-section">
+      <h2>Order Summary</h2>
+      
+      <div class="customer-selection">
+        <label for="customer">Select Customer:</label>
+        <select id="customer" [(ngModel)]="selectedCustomerId" class="form-control">
+          <option value="0">-- Select Customer --</option>
+          <option *ngFor="let customer of customers" [value]="customer.id">
+            {{customer.name}} ({{customer.email}})
+          </option>
+        </select>
+      </div>
+
+      <div class="cart" *ngIf="cart.length > 0; else emptyCart">
+        <div *ngFor="let item of cart" class="cart-item">
+          <div class="cart-item-info">
+            <h4>{{getMenuItem(item.menuItemId)?.name}}</h4>
+            <p class="item-price">${{getMenuItem(item.menuItemId)?.price}} each</p>
+          </div>
+          <div class="quantity-controls">
+            <button (click)="updateQuantity(item.menuItemId, item.quantity - 1)" class="qty-btn">-</button>
+            <span class="quantity">{{item.quantity}}</span>
+            <button (click)="updateQuantity(item.menuItemId, item.quantity + 1)" class="qty-btn">+</button>
+          </div>
+          <div class="item-total">
+            ${{(getMenuItem(item.menuItemId)?.price || 0) * item.quantity | number:'1.2-2'}}
+          </div>
+          <button (click)="removeFromCart(item.menuItemId)" class="remove-btn">×</button>
+        </div>
+        
+        <div class="cart-total">
+          <strong>Total: ${{getCartTotal() | number:'1.2-2'}}</strong>
+        </div>
+      </div>
+
+      <ng-template #emptyCart>
+        <p class="empty-cart">Your cart is empty. Add items from the menu to get started.</p>
+      </ng-template>
+
+      <div class="order-notes">
+        <label for="notes">Order Notes (Optional):</label>
+        <textarea 
+          id="notes" 
+          [(ngModel)]="orderNotes" 
+          class="form-control"
+          placeholder="Any special instructions...">
+        </textarea>
+      </div>
+
+      <button 
+        class="place-order-btn" 
+        [disabled]="cart.length === 0 || selectedCustomerId === 0 || isPlacingOrder"
+        (click)="placeOrder()">
+        {{isPlacingOrder ? 'Placing Order...' : 'Place Order'}}
+      </button>
+    </div>
+  </div>
+</div>

@@ -31,7 +31,7 @@ public class OrderController {
 
     @GetMapping
     public List<Order> getAllOrders() {
-        return orderRepository.findByOrderByOrderTimeDesc();
+        return orderRepository.findAllOrdersByOrderTimeDesc();
     }
 
     @GetMapping("/{id}")
