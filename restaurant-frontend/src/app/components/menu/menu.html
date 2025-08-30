@@ -1,0 +1,29 @@
+<div class="menu-container">
+  <h1>Restaurant Menu</h1>
+  
+  <div class="category-filter">
+    <button 
+      *ngFor="let category of categories" 
+      class="category-btn"
+      [class.active]="selectedCategory === category"
+      (click)="onCategoryChange(category)">
+      {{category}}
+    </button>
+  </div>
+
+  <div class="menu-grid">
+    <div *ngFor="let item of filteredItems" class="menu-item">
+      <div class="menu-item-header">
+        <h3>{{item.name}}</h3>
+        <span class="price">${{item.price}}</span>
+      </div>
+      <p class="description">{{item.description}}</p>
+      <div class="item-footer">
+        <span class="category-tag">{{item.category}}</span>
+        <span class="availability" [class.available]="item.available">
+          {{item.available ? 'Available' : 'Unavailable'}}
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
